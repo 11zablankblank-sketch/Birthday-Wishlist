@@ -22,7 +22,8 @@ const giftList = document.getElementById("gift-list");
 // Load gifts from Firestore
 async function loadGifts() {
     try {
-        const querySnapshot = await getDocs(collection(db, "Wishlist"));
+        // Collection name is lowercase
+        const querySnapshot = await getDocs(collection(db, "wishlist"));
 
         giftList.innerHTML = "";
 
@@ -54,9 +55,8 @@ async function loadGifts() {
 
     } catch (error) {
         console.error("Error loading gifts:", error);
-        giftList.innerHTML = "<p>Unable to load wishlist.</p>";
+        giftList.innerHTML = `<p>Error: ${error.message}</p>`;
     }
 }
 
-// Start loading gifts
 loadGifts();
