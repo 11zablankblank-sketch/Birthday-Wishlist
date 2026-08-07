@@ -1,4 +1,4 @@
-// Firebase imports
+// Import Firebase
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
 
 import {
@@ -19,37 +19,39 @@ const firebaseConfig = {
 };
 
 
-// Initialize Firebase
+// Start Firebase
 const app = initializeApp(firebaseConfig);
-
 
 // Connect to Firestore
 const db = getFirestore(app);
 
 
-// Get the gift list on the webpage
+// Find the place where the gifts will appear
 const giftList = document.getElementById("gift-list");
 
 
-// Load gifts from Firestore
+// Load the gifts
 async function loadGifts() {
 
     try {
 
-        // Get all documents from the "wishlist" collection
+        console.log("Connecting to Firestore...");
+
         const querySnapshot = await getDocs(
             collection(db, "wishlist")
         );
 
+        console.log("Number of gifts found:", querySnapshot.size);
 
-        // Clear "Loading wishlist..."
         giftList.innerHTML = "";
 
 
-        // Check whether any gifts were found
+        // If there are no gifts
         if (querySnapshot.empty) {
 
-            giftList.innerHTML = "<p>No gifts found.</p>";
+            giftList.innerHTML = `
+                <p>No gifts found.</p>
+            `;
 
             return;
         }
@@ -60,63 +62,71 @@ async function loadGifts() {
 
             const gift = doc.data();
 
-
-            const giftCard = document.createElement("div");
-
-            giftCard.className = "gift-card";
+            console.log("Gift:", doc.id, gift);
 
 
-            giftCard.innerHTML = `
+            giftList.innerHTML += `
 
-                ${
-                    gift.Image
-                        ? `<img src="${gift.Image}" 
-                                alt="${gift.Name || "Gift"}" 
-                                width="200">`
-                        : ""
-                }
+                <div class="gift-card">
 
-                <h2>${gift.Name || "Gift"}</h2>
-
-
-                ${
-                    gift.Note
-                        ? `<p>${gift.Note}</p>`
-                        : ""
-                }
-
-
-                ${
-                    gift.Link
-                        ? `
-                            <a href="${gift.Link}" target="_blank">
-                                Buy Gift
-                            </a>
-                          `
-                        : ""
-                }
-
-
-                <p>
                     ${
-                        gift.Purchased
-                            ? "✅ Purchased"
-                            : "🎁 Available"
+                        gift.Image
+                            ? `
+                                <img
+                                    src="${gift.Image}"
+                                    alt="${gift.Name || "Gift"}"
+                                    width="200"
+                                >
+                              `
+                            : ""
                     }
-                </p>
+
+
+                    <h2>
+                        ${gift.Name || "Gift"}
+                    </h2>
+
+
+                    ${
+                        gift.Note
+                            ? `<p>${gift.Note}</p>`
+                            : ""
+                    }
+
+
+                    ${
+                        gift.Link
+                            ? `
+                                <a
+                                    href="${gift.Link}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    Buy Gift
+                                </a>
+                              `
+                            : ""
+                    }
+
+
+                    <p>
+                        ${
+                            gift.Purchased
+                                ? "✅ Purchased"
+                                : "🎁 Available"
+                        }
+                    </p>
+
+                </div>
 
             `;
-
-
-            giftList.appendChild(giftCard);
 
         });
 
 
     } catch (error) {
 
-        console.error("Error loading gifts:", error);
-
+        console.error("Firestore error:", error);
 
         giftList.innerHTML = `
             <p>
@@ -129,5 +139,5 @@ async function loadGifts() {
 }
 
 
-// Start loading the gifts
+// Run the function
 loadGifts();
