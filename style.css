@@ -25,16 +25,18 @@ h1 {
     background: white;
     border-radius: 20px;
     padding: 22px;
-    box-shadow: 0 8px 20px rgba(0,0,0,.15),
-                0 0 0 3px #d4af37;
+    box-shadow: 
+        0 8px 20px rgba(0,0,0,.15),
+        0 0 0 3px #d4af37;
     text-align: center;
     transition: transform .3s ease, box-shadow .3s ease;
 }
 
 .gift-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 15px 30px rgba(0,0,0,.2),
-                0 0 0 4px #c00000;
+    box-shadow:
+        0 15px 30px rgba(0,0,0,.2),
+        0 0 0 4px #c00000;
 }
 
 .gift-card img {
