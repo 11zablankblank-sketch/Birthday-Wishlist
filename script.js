@@ -22,6 +22,7 @@ const firebaseConfig = {
 // Start Firebase
 const app = initializeApp(firebaseConfig);
 
+
 // Connect to Firestore
 const db = getFirestore(app);
 
@@ -30,23 +31,25 @@ const db = getFirestore(app);
 const giftList = document.getElementById("gift-list");
 
 
-// Load the gifts
+// Load gifts
 async function loadGifts() {
 
     try {
 
         console.log("Connecting to Firestore...");
 
+
         const querySnapshot = await getDocs(
-            collection(db, "wishlist")
+            collection(db, "Wishlist")
         );
 
+
         console.log("Number of gifts found:", querySnapshot.size);
+
 
         giftList.innerHTML = "";
 
 
-        // If there are no gifts
         if (querySnapshot.empty) {
 
             giftList.innerHTML = `
@@ -57,7 +60,6 @@ async function loadGifts() {
         }
 
 
-        // Display every gift
         querySnapshot.forEach((doc) => {
 
             const gift = doc.data();
@@ -67,57 +69,48 @@ async function loadGifts() {
 
             giftList.innerHTML += `
 
-                <div class="gift-card">
+            <div class="gift-card">
 
+                ${
+                    gift.Image
+                    ? `<img src="${gift.Image}" alt="${gift.Name || "Gift"}">`
+                    : ""
+                }
+
+
+                <h2>
+                    ${gift.Name || "Gift"}
+                </h2>
+
+
+                ${
+                    gift.Note
+                    ? `<p>${gift.Note}</p>`
+                    : ""
+                }
+
+
+                ${
+                    gift.Link
+                    ? `
+                    <a href="${gift.Link}" target="_blank">
+                        Buy Gift
+                    </a>
+                    `
+                    : ""
+                }
+
+
+                <p>
                     ${
-                        gift.Image
-                            ? `
-                                <img
-                                    src="${gift.Image}"
-                                    alt="${gift.Name || "Gift"}"
-                                    width="200"
-                                >
-                              `
-                            : ""
+                        gift.Purchased
+                        ? "✅ Purchased"
+                        : "🎁 Available"
                     }
+                </p>
 
 
-                    <h2>
-                        ${gift.Name || "Gift"}
-                    </h2>
-
-
-                    ${
-                        gift.Note
-                            ? `<p>${gift.Note}</p>`
-                            : ""
-                    }
-
-
-                    ${
-                        gift.Link
-                            ? `
-                                <a
-                                    href="${gift.Link}"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    Buy Gift
-                                </a>
-                              `
-                            : ""
-                    }
-
-
-                    <p>
-                        ${
-                            gift.Purchased
-                                ? "✅ Purchased"
-                                : "🎁 Available"
-                        }
-                    </p>
-
-                </div>
+            </div>
 
             `;
 
@@ -139,5 +132,5 @@ async function loadGifts() {
 }
 
 
-// Run the function
+// Run
 loadGifts();
