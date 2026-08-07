@@ -22,29 +22,41 @@ const firebaseConfig = {
 // Start Firebase
 const app = initializeApp(firebaseConfig);
 
+
 // Connect to Firestore
 const db = getFirestore(app);
 
-// Find gift container
+
+// Find the gift list
 const giftList = document.getElementById("gift-list");
 
 
-// Load gifts
+// Load the gifts
 async function loadGifts() {
 
     try {
 
-        console.log("Firebase connected.");
-        console.log("Looking for Wishlist collection...");
+        console.log("Connecting to Firestore...");
 
+
+        // IMPORTANT:
+        // Your collection is named "wishlist" with a lowercase w.
         const querySnapshot = await getDocs(
-            collection(db, "Wishlist")
+            collection(db, "wishlist")
         );
 
-        console.log("Number of gifts found:", querySnapshot.size);
 
+        console.log(
+            "Number of gifts found:",
+            querySnapshot.size
+        );
+
+
+        // Clear "Loading wishlist..."
         giftList.innerHTML = "";
 
+
+        // If there are no gifts
         if (querySnapshot.empty) {
 
             giftList.innerHTML = `
@@ -55,28 +67,41 @@ async function loadGifts() {
         }
 
 
+        // Display every gift
         querySnapshot.forEach((doc) => {
 
             const gift = doc.data();
 
-            console.log("Gift found:", doc.id, gift);
+            console.log("Gift:", doc.id, gift);
+
 
             giftList.innerHTML += `
+
                 <div class="gift-card">
 
                     ${
                         gift.Image
-                            ? `<img src="${gift.Image}" alt="${gift.Name || "Gift"}">`
+                            ? `
+                                <img
+                                    src="${gift.Image}"
+                                    alt="${gift.Name || "Gift"}"
+                                >
+                              `
                             : ""
                     }
 
-                    <h2>${gift.Name || "Gift"}</h2>
+
+                    <h2>
+                        ${gift.Name || "Gift"}
+                    </h2>
+
 
                     ${
                         gift.Note
                             ? `<p>${gift.Note}</p>`
                             : ""
                     }
+
 
                     ${
                         gift.Link
@@ -88,9 +113,10 @@ async function loadGifts() {
                                 >
                                     Buy Gift
                                 </a>
-                            `
+                              `
                             : ""
                     }
+
 
                     <p>
                         ${
@@ -101,20 +127,30 @@ async function loadGifts() {
                     </p>
 
                 </div>
+
             `;
+
         });
+
 
     } catch (error) {
 
-        console.error("FIRESTORE ERROR:", error);
+        console.error(
+            "Firestore error:",
+            error
+        );
+
 
         giftList.innerHTML = `
             <p>
-                Error loading gifts: ${error.message}
+                Error loading gifts:
+                ${error.message}
             </p>
         `;
+
     }
 }
 
 
+// Run the function
 loadGifts();
